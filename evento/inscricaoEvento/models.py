@@ -7,6 +7,9 @@ class Pessoa(models.Model):
     idade = models.IntegerField()
     usuario = models.ForeignKey(User, null=True, blank=False)
 
+    def __str__(self):
+        return self.nome
+
 class Evento(models.Model):
     nome = models.CharField(max_length=128)
     eventoPrincipal = models.CharField(max_length=256)
@@ -19,14 +22,22 @@ class Evento(models.Model):
     endereco = models.CharField(max_length=100)
     cep = models.CharField(max_length=8)
 
+    def __str__(self):
+        return self.nome
+
 class Ticket(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
     valor = models.FloatField()
     evento = models.ForeignKey(Evento, null=True, blank=False)
 
+    def __str__(self):
+        return self.nome
+
 class Inscricao(models.Model):
     participante = models.ForeignKey(Pessoa, related_name="participanteInscrito", null=True, blank=False)
     evento = models.ForeignKey(Evento, related_name="eventoVinculado", null=True, blank=False)
     tickets = models.ManyToManyField(Ticket, blank=True, related_name='tickets')
     validacao = models.BooleanField("Situação do pagamento de tickets",default=False)
+def __str__(self):
+        return "Inscrição X"

@@ -13,6 +13,12 @@ class PessoaSerializer(serializers.HyperlinkedModelSerializer):
         model = Pessoa
         fields = '__all__'
 
+    def create(self, validated_data):
+        user_data = validated_data.pop('usuario')
+        u = User.objects.create(**user_data)
+        p = Pessoa.objects.create(usuario = u, **validated_data)
+        return p
+
 class EventoSerializer(serializers.HyperlinkedModelSerializer):
     data_inicio = serializers.DateTimeField(source='dataEHoraDeInicio', format='%d-%m-%Y %H:%M:%S')
     class Meta:
@@ -24,6 +30,12 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ticket
         fields = ('nome', 'descricao','valor','evento')
+
+    #def create(self, validated_data): #corrigir
+    #    evento_data = validated_data.pop('evento')
+    #    e = Evento.objects.create(**evento_data)
+    #    t = Ticket.objects.create(evento = e, **validated_data)
+    #    return t
 
 class InscricaoSerializer(serializers.HyperlinkedModelSerializer):
     evento = EventoSerializer(many = False)

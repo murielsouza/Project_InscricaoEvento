@@ -26,10 +26,16 @@ class EventoSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 class TicketSerializer(serializers.HyperlinkedModelSerializer):
-    evento = EventoSerializer(many = False)
+    #evento = EventoSerializer(many = False)
     class Meta:
         model = Ticket
         fields = ('nome', 'descricao','valor','evento')
+
+    def create(self, validated_data):
+        print(validated_data)
+        #evento_data = validated_data.pop("evento")
+        #evento = Evento.objects.get(nome=evento_data['nome'])
+        return Ticket.objects.create(**validated_data)
 
     #def create(self, validated_data): #corrigir
     #    evento_data = validated_data.pop('evento')
@@ -38,9 +44,21 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
     #    return t
 
 class InscricaoSerializer(serializers.HyperlinkedModelSerializer):
-    evento = EventoSerializer(many = False)
-    participante = PessoaSerializer(many = False)
-    tickets = TicketSerializer(many = True)
+    #evento = EventoSerializer(many = False)
+    #participante = PessoaSerializer(many = False)
+    #tickets = TicketSerializer(many = True)
     class Meta:
         model = Inscricao
         fields = ('participante', 'evento','tickets','validacao')
+
+    def create(self,validated_data): #alguns comentários dessa função estão errados, verificar!!
+        #pessoa_data = validated_data.pop("participante")
+        #evento_data = validated_data.pop("evento")
+        #ticket_data = validated_data.pop("tickets")
+        #pessoa = models.Pessoa.objects.create(**pessoa_data)
+        #evento = model.Evento.objects.create(**evento_data)
+        #ticket = models.Ticket.objects.create(**ticket_data)
+        return Inscricao.objects.create(**validated_data)
+
+    #fazer depois: uma forma de realizar uma inscrição ou ticket sem a necessidade de inserir dados de objetos relacionados
+    #exemplo, fazer a incrição sem a necessidade de criar um evento novo, utilizar os já existentes;

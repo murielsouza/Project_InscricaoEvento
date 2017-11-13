@@ -19,11 +19,25 @@ class PessoaSerializer(serializers.HyperlinkedModelSerializer):
         p = Pessoa.objects.create(usuario = u, **validated_data)
         return p
 
+    def update(self, instance, validated_data):
+        instance.nome = validated_data.get('nome', instance.nome)
+        instance.sexo = validated_data.get('sexo', instance.sexo)
+        instance.idade = validated_data.get('idade', instance.idade)
+        instance.usuario.username = validated_data.get('username', instance.usuario.username)
+        instance.usuario.email = validated_data.get('email', instance.usuario.email)
+        instance.usuario.is_staff = validated_data.get('is_staff', instance.usuario.is_staff)
+        instance.save()
+        return instance
+
 class EventoSerializer(serializers.HyperlinkedModelSerializer):
     data_inicio = serializers.DateTimeField(source='dataEHoraDeInicio', format='%d-%m-%Y %H:%M:%S')
     class Meta:
         model = Evento
         fields = '__all__'
+
+    def update(self, instance, validated_data):
+        Evento.objects.filter(pk=instance.pk).update(**validated_data)
+        return instance
 
 class TicketSerializer(serializers.HyperlinkedModelSerializer):
     #evento = EventoSerializer(many = False)
@@ -36,6 +50,10 @@ class TicketSerializer(serializers.HyperlinkedModelSerializer):
         #evento_data = validated_data.pop("evento")
         #evento = Evento.objects.get(nome=evento_data['nome'])
         return Ticket.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        Ticket.objects.filter(pk=instance.pk).update(**validated_data)
+        return instance
 
     #def create(self, validated_data): #corrigir
     #    evento_data = validated_data.pop('evento')
@@ -51,13 +69,13 @@ class InscricaoSerializer(serializers.HyperlinkedModelSerializer):
         model = Inscricao
         fields = ('participante', 'evento','tickets','validacao')
 
-    def create(self,validated_data): #alguns comentários dessa função estão errados, verificar!!
+    def create(self,validated_data):
         #pessoa_data = validated_data.pop("participante")
         #evento_data = validated_data.pop("evento")
         #ticket_data = validated_data.pop("tickets")
-        #pessoa = models.Pessoa.objects.create(**pessoa_data)
-        #evento = model.Evento.objects.create(**evento_data)
-        #ticket = models.Ticket.objects.create(**ticket_data)
+        #pessoa = Pessoa.objects.create(**pessoa_data)
+        #evento = Evento.objects.create(**evento_data)
+        #ticket = Ticket.objects.create(**ticket_data)
         return Inscricao.objects.create(**validated_data)
 
     #fazer depois: uma forma de realizar uma inscrição ou ticket sem a necessidade de inserir dados de objetos relacionados
